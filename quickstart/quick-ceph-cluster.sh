@@ -22,6 +22,8 @@ ceph-deploy new $CEPH_MON_HOST
 # reduce pool size from 3 to 2
 sed -i.old -e 's/\(\[global\]\)/\1\nosd pool default size = 2/' ceph.conf
 
+set -x
+
 # Install Ceph
 ceph-deploy install $CEPH_ADM_HOST $CEPH_OSD_HOSTS
 
@@ -31,8 +33,9 @@ ceph-deploy mon create $CEPH_MON_HOST
 
 ceph-deploy gatherkeys $CEPH_MON_HOST
 
-MOUNT=/var/lib/docker
+MOUNT=/mnt/space
 for node in $CEPH_OSD_HOSTS; do
+    ssh $node mkdir -p $MOUNT
     ceph-deploy osd prepare $node:$MOUNT
 done
 
