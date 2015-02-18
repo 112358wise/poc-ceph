@@ -1,7 +1,7 @@
 FROM ubuntu:trusty
 MAINTAINER Zenoss, Inc <dev@zenoss.com> 
 
-ENV CEPH_STABLE_VERSION firefly
+ENV CEPH_STABLE_VERSION giant
 
 RUN apt-get update -qq
 
@@ -21,6 +21,7 @@ CMD ["/usr/sbin/sshd", "-D"]
 # build ceph dependencies
 RUN apt-get install -y -q make curl wget ntp openssh-server screen tmux
 RUN wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | apt-key add -
+RUN echo deb http://ceph.com/debian-$CEPH_STABLE_VERSION/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 RUN apt-get update && apt-get install -y ceph-deploy
 
 ENV CEPH_USER ceph
